@@ -11,14 +11,16 @@ AM_CFLAGS = \
 	$(limd_glue_CFLAGS) \
 	$(ssl_lib_CFLAGS) \
 	$(LFS_CFLAGS) \
-	$(PTHREAD_CFLAGS)
+	$(PTHREAD_CFLAGS) \
+	$(secret_tunnel_CFLAGS)
 
 AM_LDFLAGS = \
 	$(libusbmuxd_LIBS) \
 	$(libplist_LIBS) \
 	$(limd_glue_LIBS) \
 	$(ssl_lib_LIBS) \
-	$(PTHREAD_LIBS)
+	$(PTHREAD_LIBS) \
+	$(secret_tunnel_LIBS)
 
 lib_LTLIBRARIES = libimobiledevice-1.0.la
 libimobiledevice_1_0_la_LIBADD = $(top_builddir)/common/libinternalcommon.la

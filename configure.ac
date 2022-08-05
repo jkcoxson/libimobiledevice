@@ -28,10 +28,12 @@ dnl Minimum package versions
 LIBUSBMUXD_VERSION=2.0.2
 LIBPLIST_VERSION=2.2.0
 LIMD_GLUE_VERSION=1.0.0
+SECRET_TUNNEL=0.1.0
 
 AC_SUBST(LIBUSBMUXD_VERSION)
 AC_SUBST(LIBPLIST_VERSION)
 AC_SUBST(LIMD_GLUE_VERSION)
+AC_SUBST(SECRET_TUNNEL)
 
 # Checks for programs.
 AC_PROG_CC
@@ -43,6 +45,7 @@ LT_INIT
 PKG_CHECK_MODULES(libusbmuxd, libusbmuxd-2.0 >= $LIBUSBMUXD_VERSION)
 PKG_CHECK_MODULES(libplist, libplist-2.0 >= $LIBPLIST_VERSION)
 PKG_CHECK_MODULES(limd_glue, libimobiledevice-glue-1.0 >= $LIMD_GLUE_VERSION)
+PKG_CHECK_MODULES(secret_tunnel, secret_tunnel >= $SECRET_TUNNEL)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h sys/time.h])

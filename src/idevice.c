@@ -60,6 +60,7 @@
 #include "lockdown.h"
 #include "common/userpref.h"
 #include "common/debug.h"
+#include "secret_tunnel.h"
 
 #ifndef ECONNREFUSED
 #define ECONNREFUSED 107
@@ -486,11 +487,13 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_free(idevice_t device)
 
 LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t port, idevice_connection_t *connection)
 {
-	if (!device) {
-		return IDEVICE_E_INVALID_ARG;
-	}
+    test();
+	
+    if (!device) {
+        return IDEVICE_E_INVALID_ARG;
+    }
 
-	if (device->conn_type == CONNECTION_USBMUXD) {
+        if (device->conn_type == CONNECTION_USBMUXD) {
 		int sfd = usbmuxd_connect(device->mux_id, port);
 		if (sfd < 0) {
 			debug_info("ERROR: Connecting to usbmux device failed: %d (%s)", sfd, strerror(-sfd));

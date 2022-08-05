@@ -16,7 +16,6 @@ bin_PROGRAMS = \
 	ideviceinfo \
 	idevicename \
 	idevicepair \
-	idevicesyslog \
 	ideviceimagemounter \
 	idevicescreenshot \
 	ideviceenterrecovery \
