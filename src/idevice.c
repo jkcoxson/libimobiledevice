@@ -488,7 +488,7 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_free(idevice_t device)
 LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t port, idevice_connection_t *connection)
 {
     test();
-	
+
     if (!device) {
         return IDEVICE_E_INVALID_ARG;
     }
@@ -518,61 +518,20 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t 
 		return IDEVICE_E_SUCCESS;
 	}
 	if (device->conn_type == CONNECTION_NETWORK) {
-		struct sockaddr_storage saddr_storage;
-		struct sockaddr* saddr = (struct sockaddr*)&saddr_storage;
-
-		/* FIXME: Improve handling of this platform/host dependent connection data */
-		if (((char*)device->conn_data)[1] == 0x02) { // AF_INET
-			saddr->sa_family = AF_INET;
-			memcpy(&saddr->sa_data[0], (char*)device->conn_data + 2, 14);
-		}
-		else if (((char*)device->conn_data)[1] == 0x1E) { // AF_INET6 (bsd)
-#ifdef AF_INET6
-			saddr->sa_family = AF_INET6;
-			/* copy the address and the host dependent scope id */
-			memcpy(&saddr->sa_data[0], (char*)device->conn_data + 2, 26);
-#else
-			debug_info("ERROR: Got an IPv6 address but this system doesn't support IPv6");
-			return IDEVICE_E_UNKNOWN_ERROR;
-#endif
-		}
-		else {
-			debug_info("Unsupported address family 0x%02x", ((char*)device->conn_data)[1]);
-			return IDEVICE_E_UNKNOWN_ERROR;
-		}
-
-		char addrtxt[48];
-		addrtxt[0] = '\0';
-
-		if (!socket_addr_to_string(saddr, addrtxt, sizeof(addrtxt))) {
-			debug_info("Failed to convert network address: %d (%s)", errno, strerror(errno));
-		}
-
-		debug_info("Connecting to %s port %d...", addrtxt, port);
-
-		int sfd = socket_connect_addr(saddr, port);
-		if (sfd < 0) {
-			int result = errno;
-			debug_info("ERROR: Connecting to network device failed: %d (%s)", result, strerror(result));
-			switch (result) {
-			case ECONNREFUSED:
-				return IDEVICE_E_CONNREFUSED;
-			default:
-				break;
-			}
-			return IDEVICE_E_NO_DEVICE;
-		}
+		printf("Connecting to network device\n");
+        PortHandle *portHandle = connect_tcp(0, port);
+		printf("Connected to network device\n");
 
 		idevice_connection_t new_connection = (idevice_connection_t)malloc(sizeof(struct idevice_connection_private));
 		new_connection->type = CONNECTION_NETWORK;
-		new_connection->data = (void*)(long)sfd;
+		new_connection->data = (void*)(long)portHandle;
 		new_connection->ssl_data = NULL;
 		new_connection->device = device;
 		new_connection->ssl_recv_timeout = (unsigned int)-1;
 
 		*connection = new_connection;
 
-		return IDEVICE_E_SUCCESS;
+        return IDEVICE_E_SUCCESS;
 	}
 
 	debug_info("Unknown connection type %d", device->conn_type);
@@ -628,14 +587,13 @@ static idevice_error_t internal_connection_send(idevice_connection_t connection,
 		return IDEVICE_E_SUCCESS;
 	}
 	if (connection->type == CONNECTION_NETWORK) {
-		int s = socket_send((int)(long)connection->data, (void*)data, len);
-		if (s < 0) {
-			*sent_bytes = 0;
-			return IDEVICE_E_UNKNOWN_ERROR;
-		}
-		*sent_bytes = s;
-		return IDEVICE_E_SUCCESS;
-	}
+        tcp_handle_send((int)(long)connection->data, data, len);
+
+		// Set sent_bytes to the number of bytes sent
+		*sent_bytes = len;
+
+        return IDEVICE_E_SUCCESS;
+    }
 
 	debug_info("Unknown connection type %d", connection->type);
 	return IDEVICE_E_UNKNOWN_ERROR;
