@@ -487,8 +487,6 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_free(idevice_t device)
 
 LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t port, idevice_connection_t *connection)
 {
-    test();
-
     if (!device) {
         return IDEVICE_E_INVALID_ARG;
     }
@@ -524,7 +522,7 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t 
 
 		idevice_connection_t new_connection = (idevice_connection_t)malloc(sizeof(struct idevice_connection_private));
 		new_connection->type = CONNECTION_NETWORK;
-		new_connection->data = (void*)(long)portHandle;
+		new_connection->data = (void*)portHandle;
 		new_connection->ssl_data = NULL;
 		new_connection->device = device;
 		new_connection->ssl_recv_timeout = (unsigned int)-1;
@@ -587,10 +585,10 @@ static idevice_error_t internal_connection_send(idevice_connection_t connection,
 		return IDEVICE_E_SUCCESS;
 	}
 	if (connection->type == CONNECTION_NETWORK) {
-        tcp_handle_send((int)(long)connection->data, data, len);
+        tcp_handle_send(connection->data, data, len);
 
-		// Set sent_bytes to the number of bytes sent
-		*sent_bytes = len;
+        // Set sent_bytes to the number of bytes sent
+        *sent_bytes = len;
 
         return IDEVICE_E_SUCCESS;
     }
