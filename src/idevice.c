@@ -551,9 +551,10 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_disconnect(idevice_connection_t con
 		connection->data = NULL;
 		result = IDEVICE_E_SUCCESS;
 	} else if (connection->type == CONNECTION_NETWORK) {
-		socket_close((int)(long)connection->data);
-		connection->data = NULL;
-		result = IDEVICE_E_SUCCESS;
+		// socket_close((int)(long)connection->data);
+                printf("TODO close Wireguard Socket!!\n");
+                connection->data = NULL;
+                result = IDEVICE_E_SUCCESS;
 	} else {
 		debug_info("Unknown connection type %d", connection->type);
 	}
@@ -686,11 +687,12 @@ static inline idevice_error_t socket_recv_to_idevice_error(int conn_error, uint3
  */
 static idevice_error_t internal_connection_receive_timeout(idevice_connection_t connection, char *data, uint32_t len, uint32_t *recv_bytes, unsigned int timeout)
 {
-	if (!connection) {
-		return IDEVICE_E_INVALID_ARG;
-	}
+    printf("Receive timeout pls\n");
+    if (!connection) {
+        return IDEVICE_E_INVALID_ARG;
+    }
 
-	if (connection->type == CONNECTION_USBMUXD) {
+        if (connection->type == CONNECTION_USBMUXD) {
 		int conn_error = usbmuxd_recv_timeout((int)(long)connection->data, data, len, recv_bytes, timeout);
 		idevice_error_t error = socket_recv_to_idevice_error(conn_error, len, *recv_bytes);
 		if (error == IDEVICE_E_UNKNOWN_ERROR) {
@@ -699,17 +701,18 @@ static idevice_error_t internal_connection_receive_timeout(idevice_connection_t 
 		return error;
 	}
 	if (connection->type == CONNECTION_NETWORK) {
-		int res = socket_receive_timeout((int)(long)connection->data, data, len, 0, timeout);
-		idevice_error_t error = socket_recv_to_idevice_error(res, 0, 0);
-		if (error == IDEVICE_E_SUCCESS) {
+		// int res = socket_receive_timeout((int)(long)connection->data, data, len, 0, timeout);
+                int res = tcp_handle_recv(connection->data, data, len);
+                idevice_error_t error = socket_recv_to_idevice_error(res, 0, 0);
+                if (error == IDEVICE_E_SUCCESS) {
 			*recv_bytes = (uint32_t)res;
 		} else if (error == IDEVICE_E_UNKNOWN_ERROR) {
 			debug_info("ERROR: socket_receive_timeout returned %d (%s)", res, strerror(-res));
 		}
-		return error;
-	}
+                return IDEVICE_E_SUCCESS;
+        }
 
-	debug_info("Unknown connection type %d", connection->type);
+        debug_info("Unknown connection type %d", connection->type);
 	return IDEVICE_E_UNKNOWN_ERROR;
 }
 
