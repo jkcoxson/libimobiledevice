@@ -802,10 +802,10 @@ static idevice_error_t internal_connection_receive(idevice_connection_t connecti
 		return IDEVICE_E_SUCCESS;
 	}
 	if (connection->type == CONNECTION_NETWORK) {
-		int res = socket_receive((int)(long)connection->data, data, len);
-		if (res < 0) {
-			debug_info("ERROR: socket_receive returned %d (%s)", res, strerror(-res));
-			return IDEVICE_E_UNKNOWN_ERROR;
+            int res = tcp_handle_recv(connection->data, data, len);
+            if (res < 0) {
+                debug_info("ERROR: socket_receive returned %d (%s)", res, strerror(-res));
+                return IDEVICE_E_UNKNOWN_ERROR;
 		}
 		*recv_bytes = (uint32_t)res;
 		return IDEVICE_E_SUCCESS;
