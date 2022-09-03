@@ -402,23 +402,6 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_device_list_free(char **devices)
 	return IDEVICE_E_SUCCESS;
 }
 
-LIBIMOBILEDEVICE_API idevice_t idevice_create_new(const char *udid, const uint32_t mux_id) {
-    struct idevice_private device;
-
-	// Copy the basic information
-    device.udid = udid;
-    device.device_class = 0;
-    device.version = 0;
-    device.mux_id = mux_id;
-
-	// Add garbage bytes
-    u_int8_t garbage[16];
-    u_int8_t *ptr = garbage;
-    device.conn_data = ptr;
-
-    return device;
-}
-
 LIBIMOBILEDEVICE_API void idevice_set_debug_level(int level)
 {
 	internal_set_debug_level(level);

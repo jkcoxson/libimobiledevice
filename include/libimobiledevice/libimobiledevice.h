@@ -201,17 +201,6 @@ idevice_error_t idevice_get_device_list_extended(idevice_info_t **devices, int *
  */
 idevice_error_t idevice_device_list_extended_free(idevice_info_t *devices);
 
-/**
- * yeah bois
- * 
- * @param udid The UDID of the device
- * 
- * @param mux_id The ID of the muxer idk
- * 
- * @return The struct to the newly created device. There is no guarantee that it's a valid device.
- */
-idevice_t idevice_create_new(const char *udid, u_int32_t mux_id);
-
 /* device structure creation and destruction */
 
 /**
