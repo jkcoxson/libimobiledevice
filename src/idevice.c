@@ -551,7 +551,7 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_disconnect(idevice_connection_t con
 		connection->data = NULL;
 		result = IDEVICE_E_SUCCESS;
 	} else if (connection->type == CONNECTION_NETWORK) {
-        tcp_handle_close(connection->data)
+        tcp_handle_close(connection->data);
         connection->data = NULL;
         result = IDEVICE_E_SUCCESS;
     } else {
