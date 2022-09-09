@@ -551,10 +551,10 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_disconnect(idevice_connection_t con
 		connection->data = NULL;
 		result = IDEVICE_E_SUCCESS;
 	} else if (connection->type == CONNECTION_NETWORK) {
-		// socket_close((int)(long)connection->data);
-				tcp_handle_close(connection->data)
-                result = IDEVICE_E_SUCCESS;
-	} else {
+        tcp_handle_close(connection->data)
+        connection->data = NULL;
+        result = IDEVICE_E_SUCCESS;
+    } else {
 		debug_info("Unknown connection type %d", connection->type);
 	}
 
