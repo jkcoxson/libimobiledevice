@@ -552,8 +552,7 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_disconnect(idevice_connection_t con
 		result = IDEVICE_E_SUCCESS;
 	} else if (connection->type == CONNECTION_NETWORK) {
 		// socket_close((int)(long)connection->data);
-                printf("TODO close Wireguard Socket!!\n");
-                connection->data = NULL;
+				tcp_handle_close(connection->data)
                 result = IDEVICE_E_SUCCESS;
 	} else {
 		debug_info("Unknown connection type %d", connection->type);
