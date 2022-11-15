@@ -517,7 +517,7 @@ LIBIMOBILEDEVICE_API idevice_error_t idevice_connect(idevice_t device, uint16_t 
 	}
 	if (device->conn_type == CONNECTION_NETWORK) {
 		printf("Connecting to network device\n");
-        PortHandle *portHandle = connect_tcp(0, port);
+        struct PortHandle *portHandle = connect_tcp(0, port);
 		printf("Connected to network device\n");
 
 		idevice_connection_t new_connection = (idevice_connection_t)malloc(sizeof(struct idevice_connection_private));
